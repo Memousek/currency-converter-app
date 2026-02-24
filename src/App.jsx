@@ -121,13 +121,25 @@ const initial = getParams();
 const searchParams = new URLSearchParams(window.location.search);
 const hasAmountParam = searchParams.has("amount");
 const isCompact = searchParams.get("variant") === "compact";
-const isEmbedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
+const colorParam = searchParams.get("color");
+const colorScheme = colorParam === "dark" ? "dark" : colorParam === "light" ? "light" : "auto";
+const isEmbedded = (() => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+})();
 
 function Attribution() {
   return (
     <div className="attribution">
       Converted using{" "}
-      <a href={window.location.origin} target="_blank" rel="noopener noreferrer">
+      <a
+        href={window.location.origin}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         FX Convert
       </a>
     </div>
@@ -180,7 +192,7 @@ export default function App() {
   }, [amount, from, to]);
 
   useEffect(() => {
-    if (hasAmountParam) convert();
+    if (isCompact || hasAmountParam) convert();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -211,9 +223,13 @@ export default function App() {
   if (isCompact) {
     return (
       <main className="app" aria-label="Currency Converter">
-        <div className="card card--compact">
+        <div className={`card card--compact card--${colorScheme}`}>
           {loading && <div className="result-value compact-loading">…</div>}
-          {error && <p className="error" role="alert">{error}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
           {!loading && !error && displayResult && (
             <div className="result" aria-live="polite" aria-atomic="true">
               {result && from !== to && (
@@ -225,7 +241,9 @@ export default function App() {
               {result && from !== to && (
                 <div className="rate">
                   1 {from} ={" "}
-                  {result.rate?.toLocaleString("en-US", { maximumFractionDigits: 6 })}{" "}
+                  {result.rate?.toLocaleString("en-US", {
+                    maximumFractionDigits: 6,
+                  })}{" "}
                   {to}
                 </div>
               )}
@@ -249,7 +267,7 @@ export default function App() {
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="field">
-            <label htmlFor="amount">Amount</label>
+            <label htmlFor="t">Amount</label>
             <input
               id="amount"
               type="text"
