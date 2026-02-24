@@ -3,6 +3,17 @@ import "./App.css";
 
 const CACHE_KEY = "fx_cache";
 
+// Fallback rates seeded at build time — used only if a pair has never been
+// fetched online. Overwritten automatically after the first successful fetch.
+const SEED_RATES = [
+  { from: "JPY", to: "CZK", rate: 0.163, date: "2026-02-01" },
+  { from: "EUR", to: "CZK", rate: 25.15, date: "2026-02-01" },
+  { from: "USD", to: "CZK", rate: 23.45, date: "2026-02-01" },
+  { from: "EUR", to: "USD", rate: 1.048, date: "2026-02-01" },
+  { from: "EUR", to: "JPY", rate: 157.5, date: "2026-02-01" },
+  { from: "JPY", to: "USD", rate: 0.00665, date: "2026-02-01" },
+];
+
 // Primary + fallback CDN (no CORS, no API key, free)
 const API_PRIMARY = (base) =>
   `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${base.toLowerCase()}.json`;
@@ -60,6 +71,20 @@ function saveCache(from, to, rate, date) {
 function getCached(from, to) {
   return getCache()[`${from}_${to}`] || null;
 }
+
+function seedCache() {
+  const cache = getCache();
+  let changed = false;
+  for (const { from, to, rate, date } of SEED_RATES) {
+    if (!cache[`${from}_${to}`]) {
+      cache[`${from}_${to}`] = { rate, date };
+      changed = true;
+    }
+  }
+  if (changed) localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+}
+
+seedCache();
 
 async function fetchRate(from, to) {
   const tryFetch = async (url) => {
