@@ -78,10 +78,26 @@ async function fetchRate(from, to) {
   }
 }
 
+const VALID_CODES = new Set(CURRENCIES.map(([code]) => code));
+
+function getParams() {
+  const p = new URLSearchParams(window.location.search);
+  const amount = p.get("amount");
+  const from = p.get("from")?.toUpperCase();
+  const to = p.get("to")?.toUpperCase();
+  return {
+    amount: amount && parseFloat(amount) > 0 ? amount : "1",
+    from: from && VALID_CODES.has(from) ? from : "JPY",
+    to: to && VALID_CODES.has(to) ? to : "CZK",
+  };
+}
+
+const initial = getParams();
+
 export default function App() {
-  const [amount, setAmount] = useState("1");
-  const [from, setFrom] = useState("JPY");
-  const [to, setTo] = useState("CZK");
+  const [amount, setAmount] = useState(initial.amount);
+  const [from, setFrom] = useState(initial.from);
+  const [to, setTo] = useState(initial.to);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [offline, setOffline] = useState(false);

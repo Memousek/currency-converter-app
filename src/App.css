@@ -1,17 +1,11 @@
 .app {
-  width: 100%;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
 }
 
 .card {
   background: #fff;
-  border-radius: 16px;
   padding: 2rem;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -39,7 +33,8 @@ label {
   color: #888;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1rem;
@@ -52,7 +47,8 @@ input, select {
   -webkit-appearance: none;
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: #4f6ef7;
   background: #fff;
@@ -74,7 +70,9 @@ input:focus, select:focus {
   font-size: 1.2rem;
   cursor: pointer;
   color: #555;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
   margin-bottom: 0;
   display: flex;
   align-items: center;
