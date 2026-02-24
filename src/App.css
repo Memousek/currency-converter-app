@@ -13,6 +13,45 @@
   display: contents;
 }
 
+.card--compact {
+  padding: 0.75rem 1rem;
+  gap: 0;
+  background: transparent;
+}
+
+.card--compact .result {
+  border: none;
+  background: transparent;
+  padding: 0;
+  gap: 0.2rem;
+}
+
+.compact-loading {
+  color: #aaa;
+}
+
+.compact-from {
+  font-size: 0.8rem;
+  color: #888;
+  font-weight: 500;
+}
+
+.attribution {
+  font-size: 0.65rem;
+  color: #bbb;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.attribution a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+.attribution a:hover {
+  text-decoration: underline;
+}
+
 h1 {
   font-size: 1.5rem;
   font-weight: 700;

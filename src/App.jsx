@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "./App.css";
 
 const CACHE_KEY = "fx_cache";
@@ -118,6 +118,21 @@ function getParams() {
 }
 
 const initial = getParams();
+const searchParams = new URLSearchParams(window.location.search);
+const hasAmountParam = searchParams.has("amount");
+const isCompact = searchParams.get("variant") === "compact";
+const isEmbedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
+
+function Attribution() {
+  return (
+    <div className="attribution">
+      Converted using{" "}
+      <a href={window.location.origin} target="_blank" rel="noopener noreferrer">
+        FX Convert
+      </a>
+    </div>
+  );
+}
 
 export default function App() {
   const [amount, setAmount] = useState(initial.amount);
@@ -164,6 +179,11 @@ export default function App() {
     }
   }, [amount, from, to]);
 
+  useEffect(() => {
+    if (hasAmountParam) convert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const swap = () => {
     setFrom(to);
     setTo(from);
@@ -187,6 +207,40 @@ export default function App() {
       ? `${parseFloat(amount).toLocaleString()} ${from}`
       : `${result.converted?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${to}`
     : null;
+
+  if (isCompact) {
+    return (
+      <main className="app" aria-label="Currency Converter">
+        <div className="card card--compact">
+          {loading && <div className="result-value compact-loading">…</div>}
+          {error && <p className="error" role="alert">{error}</p>}
+          {!loading && !error && displayResult && (
+            <div className="result" aria-live="polite" aria-atomic="true">
+              {result && from !== to && (
+                <div className="compact-from">
+                  {parseFloat(amount).toLocaleString("en-US")} {from}
+                </div>
+              )}
+              <div className="result-value">{displayResult}</div>
+              {result && from !== to && (
+                <div className="rate">
+                  1 {from} ={" "}
+                  {result.rate?.toLocaleString("en-US", { maximumFractionDigits: 6 })}{" "}
+                  {to}
+                </div>
+              )}
+              {offline && (
+                <div className="offline-badge">
+                  Offline — cached rates from {result.cachedDate}
+                </div>
+              )}
+            </div>
+          )}
+          <Attribution />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="app" aria-label="Currency Converter">
@@ -287,6 +341,7 @@ export default function App() {
             )}
           </div>
         )}
+        {isEmbedded && <Attribution />}
       </div>
     </main>
   );
