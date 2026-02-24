@@ -6,12 +6,14 @@ const CACHE_KEY = "fx_cache";
 // Fallback rates seeded at build time — used only if a pair has never been
 // fetched online. Overwritten automatically after the first successful fetch.
 const SEED_RATES = [
-  { from: "JPY", to: "CZK", rate: 0.163, date: "2026-02-01" },
+  { from: "JPY", to: "CZK", rate: 0.13, date: "2026-02-01" },
+  { from: "CZK", to: "JPY", rate: 7.58, date: "2026-02-01" },
   { from: "EUR", to: "CZK", rate: 25.15, date: "2026-02-01" },
   { from: "USD", to: "CZK", rate: 23.45, date: "2026-02-01" },
   { from: "EUR", to: "USD", rate: 1.048, date: "2026-02-01" },
   { from: "EUR", to: "JPY", rate: 157.5, date: "2026-02-01" },
   { from: "JPY", to: "USD", rate: 0.00665, date: "2026-02-01" },
+  { from: "USD", to: "JPY", rate: 155.4, date: "2026-02-01" },
 ];
 
 // Primary + fallback CDN (no CORS, no API key, free)
@@ -122,7 +124,8 @@ const searchParams = new URLSearchParams(window.location.search);
 const hasAmountParam = searchParams.has("amount");
 const isCompact = searchParams.get("variant") === "compact";
 const colorParam = searchParams.get("color");
-const colorScheme = colorParam === "dark" ? "dark" : colorParam === "light" ? "light" : "auto";
+const colorScheme =
+  colorParam === "dark" ? "dark" : colorParam === "light" ? "light" : "auto";
 const isEmbedded = (() => {
   try {
     return window.self !== window.top;
