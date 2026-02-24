@@ -177,6 +177,11 @@ export default function App() {
     if (val === "" || /^\d*\.?\d*$/.test(val)) setAmount(val);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    convert();
+  };
+
   const displayResult = result
     ? from === to
       ? `${parseFloat(amount).toLocaleString()} ${from}`
@@ -184,55 +189,85 @@ export default function App() {
     : null;
 
   return (
-    <div className="app">
+    <main className="app" aria-label="Currency Converter">
       <div className="card">
-        <div className="field">
-          <label>Amount</label>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={amount}
-            onChange={handleAmountChange}
-            placeholder="0"
-          />
-        </div>
+        <h1 className="sr-only">Currency Converter</h1>
 
-        <div className="row">
+        <form onSubmit={handleSubmit} noValidate>
           <div className="field">
-            <label>From</label>
-            <select value={from} onChange={(e) => setFrom(e.target.value)}>
-              {CURRENCIES.map(([code, name]) => (
-                <option key={code} value={code}>
-                  {code} — {name}
-                </option>
-              ))}
-            </select>
+            <label htmlFor="amount">Amount</label>
+            <input
+              id="amount"
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              value={amount}
+              onChange={handleAmountChange}
+              onFocus={(e) => e.target.select()}
+              placeholder="0"
+              aria-label="Amount to convert"
+            />
           </div>
 
-          <button className="swap" onClick={swap} title="Swap currencies">
-            ⇄
+          <div className="row">
+            <div className="field">
+              <label htmlFor="from-currency">From</label>
+              <select
+                id="from-currency"
+                value={from}
+                onChange={(e) => setFrom(e.target.value)}
+              >
+                {CURRENCIES.map(([code, name]) => (
+                  <option key={code} value={code}>
+                    {code} — {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="button"
+              className="swap"
+              onClick={swap}
+              aria-label="Swap currencies"
+            >
+              ⇄
+            </button>
+
+            <div className="field">
+              <label htmlFor="to-currency">To</label>
+              <select
+                id="to-currency"
+                value={to}
+                onChange={(e) => setTo(e.target.value)}
+              >
+                {CURRENCIES.map(([code, name]) => (
+                  <option key={code} value={code}>
+                    {code} — {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="convert-btn"
+            disabled={loading}
+            aria-busy={loading}
+          >
+            {loading ? "Converting…" : "Convert"}
           </button>
+        </form>
 
-          <div className="field">
-            <label>To</label>
-            <select value={to} onChange={(e) => setTo(e.target.value)}>
-              {CURRENCIES.map(([code, name]) => (
-                <option key={code} value={code}>
-                  {code} — {name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <button className="convert-btn" onClick={convert} disabled={loading}>
-          {loading ? "Converting..." : "Convert"}
-        </button>
-
-        {error && <p className="error">{error}</p>}
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
 
         {!error && displayResult && (
-          <div className="result">
+          <div className="result" aria-live="polite" aria-atomic="true">
             <div className="result-value">{displayResult}</div>
             {result && from !== to && (
               <div className="rate">
@@ -253,6 +288,6 @@ export default function App() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }
